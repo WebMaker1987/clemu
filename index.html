@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clemu – Oferte Ridicol de Bune</title>
+  <style>
+    :root{--pink:#ff3fa4;--black:#0b0b0b;--dark:#1a1a1a;}
+    *{box-sizing:border-box;margin:0;padding:0;font-family:Segoe UI,Roboto,Arial,sans-serif}
+    body{background:var(--black);color:#fff}
+    header{position:sticky;top:0;z-index:10;background:linear-gradient(90deg,var(--black),var(--dark));border-bottom:3px solid var(--pink)}
+    .top{display:flex;gap:12px;align-items:center;padding:12px 16px}
+    .logo{display:flex;gap:10px;align-items:center}
+    .logo img{height:36px}
+    .logo span{color:var(--pink);font-weight:800;font-size:1.4rem}
+    .search{flex:1}
+    .search input{width:100%;padding:10px 14px;border-radius:999px;border:0}
+    .cart{cursor:pointer;font-weight:800}
+    .hero{padding:48px 16px;text-align:center;background:radial-gradient(circle at top,#ff6fc7,var(--black))}
+    .hero h1{font-size:2.2rem}
+    .wrap{max-width:1200px;margin:auto;padding:24px 16px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
+    .card{background:var(--dark);border-radius:16px;padding:16px;transition:.2s;display:flex;flex-direction:column;gap:8px}
+    .card:hover{transform:translateY(-4px);box-shadow:0 10px 30px rgba(255,63,164,.35)}
+    .price{color:var(--pink);font-weight:800}
+    .old{color:#aaa;text-decoration:line-through;font-size:.85rem;margin-left:6px}
+    .btn{margin-top:auto;padding:10px;border-radius:10px;border:0;background:var(--pink);color:#fff;font-weight:800;cursor:pointer}
+    .load{margin:24px auto 0;display:block;padding:12px 28px;border-radius:999px;border:0;background:var(--pink);color:#fff;font-weight:800}
+    footer{opacity:.6;text-align:center;padding:24px}
+    /* modals */
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,.65);display:none;align-items:center;justify-content:center;padding:16px}
+    .box{background:var(--dark);border-radius:16px;padding:16px;max-width:360px;width:100%}
+    .box h3{color:var(--pink);margin-bottom:8px}
+    .row{display:flex;gap:8px}
+    .box input{width:100%;padding:10px;border-radius:8px;border:0;margin-bottom:8px}
+    .warn{font-size:.8rem;opacity:.8;margin-bottom:8px}
+    .item{font-size:.9rem;margin-bottom:4px}
+    /* reviews */
+    .reviews{margin-top:32px}
+    .review{background:#111;border-radius:14px;padding:12px}
+    .stars{color:var(--pink)}
+    /* mobile polish */
+    @media(max-width:640px){
+      .hero h1{font-size:1.8rem}
+      .top{flex-wrap:wrap}
+      .logo span{font-size:1.2rem}
+      .btn,.load{padding:12px}
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="top">
+    <div class="logo"><img src="images/logo.png"><span>CLEMU</span></div>
+    <div class="search"><input id="search" placeholder="Caută produse…"></div>
+    <div class="cart" onclick="toggleCart()">🛒 <span id="count">0</span></div>
+  </div>
+</header>
+
+<section class="hero"><h1>Tot Ce Nu Știai Că Îți Trebuie</h1></section>
+
+<main class="wrap">
+  <div class="grid" id="grid"></div>
+  <button class="load" onclick="loadMore()">Încarcă mai multe</button>
+
+  <section class="reviews">
+    <h3 style="color:var(--pink);margin-bottom:12px">Recenzii reale (probabil)</h3>
+    <div class="grid">
+      <div class="review"><div class="stars">★★★★★</div>„A ajuns înainte să comand.” – Andrei</div>
+      <div class="review"><div class="stars">★★★★☆</div>„Calitate surprinzătoare pentru prețul ăsta.” – Maria</div>
+      <div class="review"><div class="stars">★★★★★</div>„Vecinul meu a primit coletul.” – Ioan</div>
+      <div class="review"><div class="stars">★★★☆☆</div>„Funcționează… emoțional.” – Radu</div>
+    </div>
+  </section>
+</main>
+
+<footer>© 2026 Clemu. Categoric nu Temu.</footer>
+
+<!-- CART -->
+<div class="modal" id="cartM" onclick="toggleCart()">
+  <div class="box" onclick="event.stopPropagation()">
+    <h3>Coș</h3>
+    <div id="items"></div>
+    <button class="btn" onclick="openCheckout()">Cumpără (DEMO)</button>
+  </div>
+</div>
+
+<!-- CHECKOUT DEMO -->
+<div class="modal" id="checkM" onclick="closeCheckout()">
+  <div class="box" onclick="event.stopPropagation()">
+    <h3>Checkout DEMO</h3>
+    <div class="warn">⚠️ Demo sigur: introdu DOAR date fictive (ex: „DEMO”, „0000”). Datele reale sunt blocate.</div>
+    <input id="name" placeholder="Nume pe card (DEMO)">
+    <input id="card" placeholder="Număr card (DEMO / 0000)">
+    <div class="row"><input id="exp" placeholder="MM/AA"><input id="cvv" placeholder="CVV"></div>
+    <button class="btn" onclick="fakeBuy()">Plasează comanda (FALS)</button>
+  </div>
+</div>
+
+<!-- SUCCESS -->
+<div class="modal" id="okM" onclick="closeOk()">
+  <div class="box" onclick="event.stopPropagation()">
+    <h3>Comandă plasată 💖</h3>
+    <p id="eta"></p>
+    <button class="btn" onclick="closeOk()">Ok, o sa astept</button>
+  </div>
+</div>
+
+<script>
+  const products = [
+  { n: 'Căști RGB cu Urechi de Pisică', p: 39.99, o: 149.99 },
+  { n: 'Aspirator Mini pentru Birou', p: 19.99, o: 59.99 },
+  { n: 'Proiector Galaxy LED', p: 64.99, o: 199.99 },
+  { n: 'Pătură Ultra Moale', p: 49.99, o: 179.99 },
+  { n: 'Lampă LED în Formă de Rață', p: 29.99, o: 99.99 },
+  { n: 'Suport Telefon Magnetic', p: 24.99, o: 89.99 },
+  { n: 'Ventilator USB Silențios', p: 19.99, o: 69.99 },
+
+  { n: 'Oglindă LED cu Suport Reglabil', p: 22.99, o: 79.99 },
+  { n: 'Rucsac Compact Anti-Furt', p: 34.99, o: 129.99 },
+  { n: 'Mini Difuzor Bluetooth Portabil', p: 17.99, o: 59.99 },
+  { n: 'Set 3 Perne Memory Foam', p: 39.99, o: 149.99 },
+  { n: 'Lampă Clip USB pentru Laptop', p: 14.99, o: 49.99 },
+  { n: 'Încărcător Wireless Rapid', p: 19.99, o: 69.99 },
+  { n: 'Husă Telefon Anti-Shock', p: 9.99, o: 39.99 },
+  { n: 'Organizator de Sertar Multifuncțional', p: 12.99, o: 49.99 },
+  { n: 'Cană Termică cu Infuzor', p: 16.99, o: 59.99 },
+  { n: 'Lampă de Noapte cu Senzor', p: 18.99, o: 69.99 },
+  { n: 'Căști Wireless Sport', p: 24.99, o: 99.99 },
+  { n: 'Mini Ventilator Portabil USB', p: 12.99, o: 49.99 },
+  { n: 'Tastatură Gaming LED', p: 29.99, o: 119.99 },
+  { n: 'Mouse Wireless Ergonomic', p: 19.99, o: 79.99 },
+  { n: 'Suport Laptop Ajustabil', p: 24.99, o: 89.99 },
+  { n: 'Baba Mister', p: 24.99, o: 89.99 },
+  // --- acum generăm restul de 180 produse ---
+];
+
+// generare automată pentru restul până la 200
+for (let i = 1; i <= 180; i++) {
+  const categories = [
+    'Rucsac', 'Lampă LED', 'Oglindă', 'Suport', 'Set Perne', 'Căști', 'Mini Ventilator',
+    'Husă', 'Cană Termică', 'Tastatură', 'Mouse', 'Organizator', 'Difuzor', 'Ceas Digital', 'Lumină de Noapte'
+  ];
+
+  const adjectives = [
+    'Portabil', 'Compact', 'Ergonomic', 'Anti-Furt', 'LED', 'Wireless', 'Magic', 'Ultra Moale', 'Colorat', 'Modern'
+  ];
+
+  const category = categories[Math.floor(Math.random() * categories.length)];
+  const adjective = adjectives[Math.floor(Math.random() * adjectives.length)];
+
+  const price = +(Math.random() * 90 + 10).toFixed(2);
+  const oldPrice = +(price + Math.random() * 150 + 20).toFixed(2);
+
+  products.push({
+    n: `${category} ${adjective} #${i}`,
+    p: price,
+    o: oldPrice
+  });
+}
+
+console.log(products.length); // verificăm că sunt 200
+
+  let shown=0,cart=[];
+  const grid=document.getElementById('grid');
+  function render(list){grid.innerHTML='';list.forEach(p=>{const d=document.createElement('div');d.className='card';d.innerHTML=`<b>${p.n}</b><div><span class=price>${p.p} lei</span><span class=old>${p.o} lei</span></div><button class=btn>Adaugă în coș</button>`;d.querySelector('button').onclick=()=>{cart.push(p);document.getElementById('count').innerText=cart.length;updateCart();};grid.appendChild(d);});}
+  function loadMore(){shown+=4;render(products.slice(0,shown));}
+  function updateCart(){document.getElementById('items').innerHTML=cart.map(i=>`<div class=item>${i.n} – ${i.p} lei</div>`).join('')||'<i>Gol</i>';}
+  function toggleCart(){const m=document.getElementById('cartM');m.style.display=m.style.display==='flex'?'none':'flex';}
+  function openCheckout(){toggleCart();document.getElementById('checkM').style.display='flex';}
+  function closeCheckout(){document.getElementById('checkM').style.display='none';}
+  function fakeBuy(){
+  const nameV = document.getElementById('name').value;
+  const cardV = document.getElementById('card').value;
+  const expV  = document.getElementById('exp').value;
+  const cvvV  = document.getElementById('cvv').value;
+  const v = [nameV, cardV, expV, cvvV].join(' ');
+
+  // Block real credit card patterns
+  if (/\b(4\d{12}(?:\d{3})?|5[1-5]\d{14}|3[47]\d{13})\b/.test(v)) {
+    alert('Numere reale de card sunt blocate. E FAKE 😉');
+    return;
+  }
+
+  // Close checkout
+  document.getElementById('checkM').style.display = 'none';
+
+  // Ridiculous delivery times
+  const times = [
+    'ieri',
+    'în 3–5 ani lucrători',
+    'după următoarea eclipsă',
+    'când curierul își găsește sensul în viață',
+    'luni, la o oră complet aleatorie',
+    'cand vor zbura porcii',
+    'la pastele cailor',
+    'niciodata'
+  ];
+
+  document.getElementById('eta').innerText =
+  '🎉 Comandă plasată cu succes!\n' +
+  'Estimare livrare: ' + times[Math.floor(Math.random() * times.length)] + '\n' +
+  'Ai plătit: 9000000000 lei';
+
+
+  // Reset cart
+  cart = [];
+  document.getElementById('count').innerText = 0;
+  updateCart();
+
+  // Show success screen
+  document.getElementById('okM').style.display = 'flex';
+}
+  function closeOk(){document.getElementById('okM').style.display='none';}
+  document.getElementById('search').addEventListener('input',e=>{const q=e.target.value.toLowerCase();render(products.filter(p=>p.n.toLowerCase().includes(q)));});
+  loadMore();
+</script>
+</body>
+</html>
