@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CLEMU.biz – PREȚURI CARE DISPĂR</title>
+
+<style>
+:root{
+  --pink:#ff2fa8;
+  --neon:#00ff9c;
+  --bg:#050505;
+  --bad:#ff0033;
+}
+
+*{
+  box-sizing:border-box;
+  font-family:"Comic Sans MS","Segoe UI",sans-serif;
+}
+
+body{
+  background:
+    repeating-linear-gradient(
+      45deg,
+      #000,
+      #000 10px,
+      #070707 10px,
+      #070707 20px
+    );
+  color:#fff;
+  overflow-x:hidden;
+}
+
+/* GLITCH */
+@keyframes glitch{
+  0%{text-shadow:2px 0 red,-2px 0 cyan}
+  50%{text-shadow:-2px 0 red,2px 0 cyan}
+  100%{text-shadow:2px 0 red,-2px 0 cyan}
+}
+
+/* SHAKE */
+@keyframes shake{
+  0%,100%{transform:translateX(0)}
+  25%{transform:translateX(-2px)}
+  75%{transform:translateX(2px)}
+}
+
+header{
+  background:linear-gradient(90deg,#000,#1a0010,#000);
+  border-bottom:5px dashed var(--pink);
+}
+
+.top{
+  display:flex;
+  gap:12px;
+  align-items:center;
+  padding:14px;
+}
+
+.logo span{
+  font-size:1.6rem;
+  font-weight:900;
+  color:var(--pink);
+  animation:glitch .2s infinite;
+}
+
+.search input{
+  width:100%;
+  padding:12px;
+  border-radius:0;
+  border:3px solid var(--neon);
+  background:#000;
+  color:#0f0;
+}
+
+.cart{
+  font-weight:900;
+  color:var(--neon);
+  cursor:pointer;
+  animation:shake .4s infinite;
+}
+
+.hero{
+  padding:50px 16px;
+  text-align:center;
+  background:
+    radial-gradient(circle at top,var(--pink),#000);
+}
+
+.hero h1{
+  font-size:2.4rem;
+  animation:glitch .15s infinite;
+}
+
+.hero::after{
+  content:"🔥 97% REDUCERE – EXPIRĂ ÎN 00:14:32 🔥";
+  display:block;
+  margin-top:12px;
+  color:var(--bad);
+  font-weight:900;
+  animation:blink 1s infinite;
+}
+
+@keyframes blink{
+  50%{opacity:.2}
+}
+
+.wrap{
+  max-width:1200px;
+  margin:auto;
+  padding:24px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:18px;
+}
+
+.card{
+  background:
+    linear-gradient(180deg,#111,#000);
+  border:2px solid var(--pink);
+  padding:14px;
+  box-shadow:
+    0 0 20px rgba(255,0,128,.6);
+  position:relative;
+}
+
+.card::before{
+  content:"ULTIMELE 2 BUCĂȚI!!!";
+  position:absolute;
+  top:-10px;
+  left:-10px;
+  background:var(--bad);
+  padding:4px 8px;
+  font-size:.7rem;
+  font-weight:900;
+  transform:rotate(-8deg);
+}
+
+.price{
+  color:var(--neon);
+  font-weight:900;
+  font-size:1.2rem;
+  animation:glitch .25s infinite;
+}
+
+.old{
+  color:#f00;
+  text-decoration:line-through;
+  font-size:.8rem;
+}
+
+.btn{
+  margin-top:10px;
+  padding:12px;
+  border:0;
+  background:
+    linear-gradient(90deg,var(--pink),#ff0044);
+  color:#fff;
+  font-weight:900;
+  cursor:pointer;
+  animation:shake .3s infinite;
+}
+
+.btn:hover{
+  filter:brightness(1.4);
+}
+
+footer{
+  text-align:center;
+  padding:24px;
+  font-size:.8rem;
+  opacity:.5;
+}
+
+/* FAKE LIVE COUNTER */
+.live{
+  position:fixed;
+  bottom:12px;
+  left:12px;
+  background:#000;
+  border:2px solid var(--neon);
+  padding:8px 12px;
+  font-size:.8rem;
+  z-index:999;
+  animation:glitch .3s infinite;
+}
+
+/* POPUP */
+.popup{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.8);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:1000;
+}
+
+.popup .box{
+  background:#000;
+  border:3px solid var(--bad);
+  padding:20px;
+  max-width:320px;
+  text-align:center;
+  animation:shake .2s infinite;
+}
+
+.popup button{
+  margin-top:12px;
+  padding:10px;
+  background:var(--bad);
+  border:0;
+  color:#fff;
+  font-weight:900;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="top">
+    <div class="logo"><span>CLEMU.biz</span></div>
+    <div class="search"><input placeholder="CAUTĂ RAPID CÂT MAI AI TIMP"></div>
+    <div class="cart">🛒 COȘ (99+)</div>
+  </div>
+</header>
+
+<section class="hero">
+  <h1>NU RATA OFERTA 😱</h1>
+</section>
+
+<main class="wrap">
+  <div class="grid" id="grid"></div>
+</main>
+
+<footer>
+© 2026 CLEMU.biz • Plăți ireversibile • Fără retur • Probabil legal
+</footer>
+
+<div class="live">🟢 3,421 persoane se uită ACUM</div>
+
+<div class="popup" id="popup">
+  <div class="box">
+    <h3>⚠️ FELICITĂRI!</h3>
+    <p>Ai fost selectat aleatoriu pentru o SUPER OFERTĂ</p>
+    <button onclick="closePop()">AM ÎNȚELES</button>
+  </div>
+</div>
+
+<script>
+const products = [];
+for(let i=1;i<=24;i++){
+  products.push({
+    n:"Produs Misterios #"+i,
+    p:(Math.random()*30+9).toFixed(2),
+    o:(Math.random()*200+100).toFixed(2)
+  });
+}
+
+const grid=document.getElementById("grid");
+products.forEach(p=>{
+  const d=document.createElement("div");
+  d.className="card";
+  d.innerHTML=`
+    <b>${p.n}</b>
+    <div><span class="price">${p.p} lei</span>
+    <span class="old">${p.o} lei</span></div>
+    <button class="btn">CUMPĂRĂ ACUM</button>
+  `;
+  grid.appendChild(d);
+});
+
+setTimeout(()=>{
+  document.getElementById("popup").style.display="flex";
+},5000);
+
+function closePop(){
+  document.getElementById("popup").style.display="none";
+}
+</script>
+
+</body>
+</html>
+
